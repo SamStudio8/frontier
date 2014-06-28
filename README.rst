@@ -28,7 +28,7 @@ To test;
 
 For coverage;
 
-* pytest-cov
+* nose
 * python-coveralls
 
 Installation

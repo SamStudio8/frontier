@@ -12,7 +12,7 @@ install: pip install -r requirements.txt
 # command to run tests, e.g. python setup.py test
 script:
   - python setup.py install
-  - py.test --cov frontier --cov-report xml
+  - nosetests --with-coverage --cover-package=frontier
 
 after_success:
   - coveralls

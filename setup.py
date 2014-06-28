@@ -13,7 +13,7 @@ requirements = [
 test_requirements = [
     "tox",
     "pytest",
-    "pytest-cov",
+    "nose",
     "python-coveralls",
 ]
 
