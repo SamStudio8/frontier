@@ -7,11 +7,12 @@ README = open('README.rst').read()
 CHANGELOG = open('CHANGELOG.rst').read()
 
 requirements = [
-    # TODO: put package requirements here
+    "numpy"
 ]
 
 test_requirements = [
-    # TODO: put package test requirements here
+    "tox",
+    "pytest"
 ]
 
 setuptools.setup(
