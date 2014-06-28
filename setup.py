@@ -22,7 +22,7 @@ setuptools.setup(
     version="0.1.0",
     url="https://github.com/samstudio8/frontier",
 
-    description="Frontier",
+    description="Provides interfaces for the reading, storage and retrieval of large machine learning data sets for use with scikit-learn",
     long_description=README + '\n\n' + CHANGELOG,
 
     author="Sam Nicholls",
