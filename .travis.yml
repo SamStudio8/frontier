@@ -10,4 +10,9 @@ python:
 install: pip install -r requirements.txt
 
 # command to run tests, e.g. python setup.py test
-script: python setup.py test
+script:
+  - py.test --cov frontier --cov-report xml
+  - coverage run --source='.' manage.py test task
+
+after_success:
+  - coveralls

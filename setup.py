@@ -12,7 +12,9 @@ requirements = [
 
 test_requirements = [
     "tox",
-    "pytest"
+    "pytest",
+    "pytest-cov",
+    "python-coveralls",
 ]
 
 setuptools.setup(
