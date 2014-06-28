@@ -36,7 +36,7 @@ class BamcheckReader(AbstractReader):
 
             # Check whether key already exists in summary
             if name in self.summary:
-                print "[NOTE] Duplicate key for %s found in %s" % (name, self.handler.name)
+                print("[NOTE] Duplicate key for %s found in %s" % (name, self.handler.name))
 
                 # Check whether the duplicate value is equal to the current
                 if self.summary[name] != value:

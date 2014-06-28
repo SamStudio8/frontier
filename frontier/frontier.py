@@ -77,14 +77,14 @@ class Statplexer(object):
         targets = TARGET_READER_CLASS(target_path, self._classes, auto_close=True).get_data()
 
         for root, subfolders, files in os.walk(self.data_dir):
-            print root + "(" + str(len(files)) + " files)"
+            print(root + "(" + str(len(files)) + " files)")
             for f in files:
                 fpath = os.path.join(root, f)
 
                 #FUTURE Still using filename for _id, allow readers to specify their own
                 _id = f.split(".")[0]
                 if _id in self._data:
-                    print "[WARN] Duplicate observation %s found in %s" % (_id, fpath)
+                    print("[WARN] Duplicate observation %s found in %s" % (_id, fpath))
 
                 if _id in targets:
                     self._targets[_id] = targets[_id]
@@ -93,7 +93,7 @@ class Statplexer(object):
                     class_label = decode_class(self._classes, targets[_id])
                     count_class(self._classes, class_label)
                 else:
-                    print "[WARN] INPUT missing TARGET"
+                    print("[WARN] INPUT missing TARGET")
 
         # Test parameter variances and output warning if zero
         self._test_variance()
