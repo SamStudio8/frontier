@@ -1,6 +1,13 @@
 frontier package
 ================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    frontier.IO
+
 Submodules
 ----------
 

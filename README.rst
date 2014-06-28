@@ -18,18 +18,23 @@ Frontier
 Requirements
 ------------
 To use;
+
 * numpy
 
 To test;
+
 * tox
 * pytest
 
 For coverage;
+
 * pytest-cov
 * python-coveralls
 
 Installation
 ------------
+
 ::
+
     pip install frontier
 
