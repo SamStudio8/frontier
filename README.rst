@@ -9,7 +9,7 @@ Frontier
         :target: https://travis-ci.org/SamStudio8/frontier
 
 .. image:: https://coveralls.io/repos/SamStudio8/frontier/badge.png?branch=master
-        :target: https://coveralls.io/repos/SamStudio8/frontier
+        :target: https://coveralls.io/r/SamStudio8/frontier
 
 A Python package providing interfaces for the reading, storage and retrieval of large machine learning data sets for use with scikit-learn.
 
