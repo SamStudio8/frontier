@@ -1,6 +1,6 @@
 __author__ = "Sam Nicholls <sn8@sanger.ac.uk>"
 __copyright__ = "Copyright (c) Sam Nicholls"
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
 
 from frontier.frontier import classify_label, encode_class

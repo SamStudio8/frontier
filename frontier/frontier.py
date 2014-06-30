@@ -1,6 +1,6 @@
 __author__ = "Sam Nicholls <sn8@sanger.ac.uk>"
 __copyright__ = "Copyright (c) Sam Nicholls"
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
 
 import numpy as np
@@ -81,14 +81,15 @@ class Statplexer(object):
             for f in files:
                 fpath = os.path.join(root, f)
 
-                #FUTURE Still using filename for _id, allow readers to specify their own
-                _id = f.split(".")[0]
+                _data = DATA_READER_CLASS(fpath, self._classes, auto_close=True).get_data()
+                _id = _data["_id"]
+
                 if _id in self._data:
                     print("[WARN] Duplicate observation %s found in %s" % (_id, fpath))
 
                 if _id in targets:
                     self._targets[_id] = targets[_id]
-                    self._data[f] = DATA_READER_CLASS(fpath, self._classes, auto_close=True).get_data()
+                    self._data[f] = _data
 
                     class_label = decode_class(self._classes, targets[_id])
                     count_class(self._classes, class_label)

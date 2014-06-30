@@ -19,7 +19,7 @@ test_requirements = [
 
 setuptools.setup(
     name="frontier",
-    version="0.1.0",
+    version="0.1.1",
     url="https://github.com/samstudio8/frontier",
 
     description="Provides interfaces for the reading, storage and retrieval of large machine learning data sets for use with scikit-learn",

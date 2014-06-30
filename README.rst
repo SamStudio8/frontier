@@ -11,7 +11,7 @@ Frontier
 .. image:: https://coveralls.io/repos/SamStudio8/frontier/badge.png?branch=master
         :target: https://coveralls.io/repos/SamStudio8/frontier
 
-Frontier
+A Python package providing interfaces for the reading, storage and retrieval of large machine learning data sets for use with scikit-learn.
 
 * Documentation: http://frontier.readthedocs.org.
 
@@ -36,5 +36,5 @@ Installation
 
 ::
 
-    pip install frontier
+    $ pip install frontier
 

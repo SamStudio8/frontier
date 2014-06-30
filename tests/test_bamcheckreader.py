@@ -1,10 +1,12 @@
 __author__ = "Sam Nicholls <sn8@sanger.ac.uk>"
 __copyright__ = "Copyright (c) Sam Nicholls"
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
 
-from frontier.IO import BamcheckReader as bcr
 import unittest
+import os
+
+from frontier.IO import BamcheckReader as bcr
 
 DATA_PATH = "tests/data/example.bamcheck.txt"
 DUP_DATA_PATH = "tests/data/example.bamcheck.dups.txt"
@@ -26,7 +28,7 @@ class TestBamcheckReader(unittest.TestCase):
         example_lines = open(DATA_PATH).readlines()
         bamcheck = bcr.BamcheckReader(DATA_PATH)
 
-        SN_count = 0
+        SN_count = 1 # Include _id
         for line in example_lines:
             if line.startswith("SN"):
                 SN_count += 1
@@ -36,7 +38,7 @@ class TestBamcheckReader(unittest.TestCase):
         example_lines = open(DUP_DATA_PATH).readlines()
         dup_bamcheck = bcr.BamcheckReader(DUP_DATA_PATH)
 
-        SN_count = 0
+        SN_count = 1 # Include _id
         keys = []
         for line in example_lines:
             if line.startswith("SN"):
@@ -77,6 +79,12 @@ class TestBamcheckReader(unittest.TestCase):
         }
         for key, value in HARDCODE_TEST_VALUES.items():
             self.assertEqual(bamcheck.summary[key], value)
+
+    def test_id_key(self):
+        example_lines = open(DATA_PATH).readlines()
+        bamcheck = bcr.BamcheckReader(DATA_PATH)
+        self.assertEqual(os.path.basename(DATA_PATH).split(".")[0], bamcheck.get_data()["_id"])
+
 
 if __name__ == '__main__':
     unittest.main()

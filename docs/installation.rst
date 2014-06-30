@@ -4,7 +4,7 @@ Installation
 
 At the command line::
 
-    $ easy_install frontier
+    $ pip install frontier
 
 Or, if you have virtualenvwrapper installed::
 

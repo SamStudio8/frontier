@@ -1,7 +1,9 @@
 __author__ = "Sam Nicholls <sn8@sanger.ac.uk>"
 __copyright__ = "Copyright (c) Sam Nicholls"
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
+
+import os
 
 from frontier.IO.AbstractReader import AbstractReader
 
@@ -17,7 +19,7 @@ class BamcheckReader(AbstractReader):
 
     def __init__(self, filepath, CLASSES=None, auto_close=True):
         """Initialise the structures for storing data and construct the reader."""
-        self.summary = SummaryNumbers()
+        self.summary = SummaryNumbers(os.path.basename(filepath).split(".")[0])
         self.indel = IndelDistribution()
         super(BamcheckReader, self).__init__(filepath, CLASSES, auto_close, 0)
 
@@ -56,8 +58,9 @@ class BamcheckReader(AbstractReader):
 
 class SummaryNumbers(dict):
     """Wraps a dictionary and provides functionality to search for keys."""
-    def __init__(self, *args):
+    def __init__(self, _id, *args):
         dict.__init__(self, args)
+        self["_id"] = _id
 
     def search(self, query):
         """Search the structure for keys matching a given query."""
