@@ -30,6 +30,10 @@ class AbstractReader(object):
         #TODO Check file is not already closed...
         self.handler.close()
 
+    def get_id(self):
+        """Return record ID."""
+        raise NotImplementedError("get_id has not been implemented")
+
     def get_data(self):
         """Return read data."""
         raise NotImplementedError("get_data has not been implemented")
