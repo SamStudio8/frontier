@@ -81,8 +81,9 @@ class Statplexer(object):
             for f in files:
                 fpath = os.path.join(root, f)
 
-                _data = DATA_READER_CLASS(fpath, self._classes, auto_close=True).get_data()
-                _id = _data["_id"]
+                drc = DATA_READER_CLASS(fpath, self._classes, auto_close=True)
+                _data = drc.get_data()
+                _id = drc.get_id()
 
                 if _id in self._data:
                     print("[WARN] Duplicate observation %s found in %s" % (_id, fpath))
