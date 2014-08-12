@@ -48,9 +48,8 @@ often need to implement yourself by inheriting from :class:`frontier.IO.Abstract
 
         def __init__(self, filepath, CLASSES=None, auto_close=True):
             """Initialise the structures for storing data and construct the reader."""
-            self.mydata = {
-                "_id": "something" # Could use os.path.basename(filepath)
-            }
+            self.myid = "something" # Could use os.path.basename(filepath)
+            self.mydata = {} # Some structure for your data
             header_skip = 1 # Numer of initial lines to ignore
             super(MyReader, self).__init__(filepath, CLASSES, auto_close, header_skip)
 
@@ -58,18 +57,22 @@ often need to implement yourself by inheriting from :class:`frontier.IO.Abstract
             """Process a line record in your file."""
             fields = line.split("\t")
 
-            _id = fields[0]
+            key = fields[0]
             value = fields[1]
 
-            self.data[_id] = value
+            self.mydata[key] = value
+
+        def get_id(self):
+            """Interface to return record ID."""
+            return self.myid
 
         def get_data(self):
             """Interface to return read data."""
             return self.mydata
 
 The name of the structure used to hold data is irrelevant, just that it is returned
-sensibly by ``get_data``. It is expected (and required) that data readers will provide
-an **_id** key in any data returned by ``get_data`` that corresponds to a key
+sensibly by ``get_data``. It is expected (and required) that data readers will return
+some unique identifier via ``get_id`` that corresponds to a key
 in the structure returned by ``get_data`` of your chosen target reader (thus
 linking a record of data to its target).
 
