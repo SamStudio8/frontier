@@ -6,6 +6,7 @@ History
 
 * Fix `#2 <https://github.com/SamStudio8/frontier/issues/2>`_
     * Add `get_id` to data readers to prevent cluttering parameter space.
+    * Update `TestBamcheckReader.test_id_key` to use `get_id()` instead of `get_data()["_id"]`
 
 0.1.1 (2014-06-30)
 ---------------------
