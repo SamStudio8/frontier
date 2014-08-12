@@ -19,7 +19,8 @@ class BamcheckReader(AbstractReader):
 
     def __init__(self, filepath, CLASSES=None, auto_close=True):
         """Initialise the structures for storing data and construct the reader."""
-        self.summary = SummaryNumbers(os.path.basename(filepath).split(".")[0])
+        self._id = os.path.basename(filepath).split(".")[0]
+        self.summary = SummaryNumbers()
         self.indel = IndelDistribution()
         super(BamcheckReader, self).__init__(filepath, CLASSES, auto_close, 0)
 
@@ -51,6 +52,9 @@ class BamcheckReader(AbstractReader):
             self.indel.inserts.append(int(fields[2]))
             self.indel.deletes.append(int(fields[3]))
 
+    def get_id(self):
+        return self._id
+
     def get_data(self):
         """Return read summary data."""
         return self.summary
@@ -58,9 +62,8 @@ class BamcheckReader(AbstractReader):
 
 class SummaryNumbers(dict):
     """Wraps a dictionary and provides functionality to search for keys."""
-    def __init__(self, _id, *args):
+    def __init__(self, *args):
         dict.__init__(self, args)
-        self["_id"] = _id
 
     def search(self, query):
         """Search the structure for keys matching a given query."""
