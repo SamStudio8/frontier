@@ -138,18 +138,18 @@ class Statplexer(object):
         min_varmag = np.min(variance_magnitudes)
         max_varmag = np.max(variance_magnitudes)
         if max_varmag - min_varmag > 1:
-            print ("\n[WARN] Magnitude of Variance ranges from %d to %d (threshold is 1)."
+            print ("\n[WARN] Magnitude of variance ranges from %d to %d (difference threshold is 1)."
                     % (min_varmag, max_varmag))
             print("       Consider normalising or removing some parameters from your data.")
 
-            margin_offset = 5+len(max(parameters, key=len))
-            print("%s-10   -5    0    5    10" % (" " * margin_offset))
-            print("%s  ^    ^    ^    ^    ^" % (" " * margin_offset))
+            print("[    ] #\tName%s-10   -5    0    5    10" % (" " * 39))
+            print("[    ]  \t    %s  ^    ^    ^    ^    ^" % (" " * 39))
+
             for i in variance_magnitudes.argsort():
                 if variances[i] == 0.0:
                     continue
 
-                offset = (margin_offset - len(parameters[i])) + 10
+                offset = 15
                 if variance_magnitudes[i] < -10:
                     offchar = '-'
                     offset -= 1
@@ -160,7 +160,7 @@ class Statplexer(object):
                     offchar = '*'
                     offset += variance_magnitudes[i]
 
-                print("%s%s%c" % (parameters[i], " " * offset, offchar))
+                print("[    ] %d\t%40s%s%c" % (i, parameters[i][:40], " " * offset, offchar))
 
     def __len__(self):
         """Return the number of observations stored in _data."""
