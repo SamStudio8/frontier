@@ -125,10 +125,42 @@ class Statplexer(object):
 
         #FUTURE Store means and variances
         variances /= i+1
+        variance_magnitudes = np.zeros(len(parameters))
+        import math
         for i, variance in enumerate(variances):
             if variance == 0.0:
                 print("[WARN] %s parameter has NIL variance (with mean %.2f)"
                         % (parameters[i], means[i]))
+                print("       Was it read correctly? Perhaps consider removing it from your data.")
+                continue
+            variance_magnitudes[i] = int(math.log10(variance))
+
+        min_varmag = np.min(variance_magnitudes)
+        max_varmag = np.max(variance_magnitudes)
+        if max_varmag - min_varmag > 1:
+            print ("\n[WARN] Magnitude of Variance ranges from %d to %d (threshold is 1)."
+                    % (min_varmag, max_varmag))
+            print("       Consider normalising or removing some parameters from your data.")
+
+            margin_offset = 5+len(max(parameters, key=len))
+            print("%s-10   -5    0    5    10" % (" " * margin_offset))
+            print("%s  ^    ^    ^    ^    ^" % (" " * margin_offset))
+            for i in variance_magnitudes.argsort():
+                if variances[i] == 0.0:
+                    continue
+
+                offset = (margin_offset - len(parameters[i])) + 10
+                if variance_magnitudes[i] < -10:
+                    offchar = '-'
+                    offset -= 1
+                elif variance_magnitudes[i] > 10:
+                    offchar = '+'
+                    offset += 11
+                else:
+                    offchar = '*'
+                    offset += variance_magnitudes[i]
+
+                print("%s%s%c" % (parameters[i], " " * offset, offchar))
 
     def __len__(self):
         """Return the number of observations stored in _data."""
