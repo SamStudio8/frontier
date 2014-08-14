@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = "Sam Nicholls <sn8@sanger.ac.uk>"
 __copyright__ = "Copyright (c) Sam Nicholls"
 __version__ = "0.1.2"
@@ -137,8 +138,8 @@ class Statplexer(object):
 
         min_varmag = np.min(variance_magnitudes)
         max_varmag = np.max(variance_magnitudes)
-        if max_varmag - min_varmag > 1:
-            print ("\n[WARN] Magnitude of variance ranges from %d to %d (difference threshold is 1)."
+        if max_varmag - min_varmag >= 2:
+            print ("\n[WARN] Magnitude of variance ranges from %d to %d (difference tolerance is ±1)."
                     % (min_varmag, max_varmag))
             print("       Consider normalising or removing some parameters from your data.")
 

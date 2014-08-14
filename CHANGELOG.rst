@@ -1,6 +1,13 @@
 History
 =======
 
+0.1.3-dev
+---------
+
+* `_test_variance` function of the `Statplexer` will now test the range of variance
+  magnitudes across each parameter of read in data, issuing a warning and producing
+  a table if a magnitude difference greater than ±1 is discovered.
+
 0.1.2 (2014-08-12)
 ---------------------
 
