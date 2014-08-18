@@ -4,9 +4,11 @@ __copyright__ = "Copyright (c) Sam Nicholls"
 __version__ = "0.1.2"
 __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
 
-import numpy as np
+import math
 import os
 import sys
+
+import numpy as np
 
 def classify_label(classes, label):
     """
@@ -127,7 +129,6 @@ class Statplexer(object):
         #FUTURE Store means and variances
         variances /= i+1
         variance_magnitudes = np.zeros(len(parameters))
-        import math
         for i, variance in enumerate(variances):
             if variance == 0.0:
                 print("[WARN] %s parameter has NIL variance (with mean %.2f)"
