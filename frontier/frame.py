@@ -55,3 +55,8 @@ class DataFrame(np.ndarray):
         self.info = getattr(obj, 'info', None)
         # We do not need to return anything
 
+    def multiply_by_label(self, multiplier, label):
+        if label in self.frontier_label_index:
+            self[:,self.frontier_label_index[label]] *= multiplier
+        else:
+            raise Exception("Unknown label %s" % label)
