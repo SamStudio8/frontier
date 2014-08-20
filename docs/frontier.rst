@@ -11,6 +11,14 @@ Subpackages
 Submodules
 ----------
 
+frontier.frame module
+---------------------
+
+.. automodule:: frontier.frame
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 frontier.frontier module
 ------------------------
 
