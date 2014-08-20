@@ -243,7 +243,9 @@ class Statplexer(object):
             else:
                 total += 1
 
+        from frame import DataFrame
         data_np_array = np.empty([total,len(names)])
+        data_np_array = DataFrame(data_np_array, names)
         targ_np_array = np.empty([total])
 
         counter = 0
