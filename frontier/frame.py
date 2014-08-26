@@ -122,7 +122,7 @@ class DataFrame(np.ndarray):
         if label in self.frontier_label_index:
             index = self.frontier_label_index[label]
         else:
-            print("[WARN] Label %s not in DataFrame" % label)
+            raise Exception("Label %s not in DataFrame" % label)
 
         if i is not None:
             return self[:, index][i]
