@@ -10,7 +10,7 @@ import sys
 
 import numpy as np
 
-from frame import DataFrame
+from .frame import DataFrame
 
 def classify_label(classes, label):
     """
