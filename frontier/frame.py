@@ -90,7 +90,7 @@ class DataFrame(np.ndarray):
                 #      self[:,self.frontier_label_index[key]] = transformation_dict[key](self[:,self.frontier_label_index[key]])
                 transformed_self[:,self.frontier_label_index[key]] = transformation_dict[key](self[:,self.frontier_label_index[key]])
 
-            except TypeError, e:
+            except TypeError as e:
                 # Try to apply the transformation to each applicable element
                 # to support use of `math` module functions which require
                 # scalars or length-1 arrays rather than lists.
@@ -98,6 +98,6 @@ class DataFrame(np.ndarray):
                     label_index = self.frontier_label_index[key]
                     for i in range(0, np.shape(self)[0]):
                         transformed_self[i, label_index] = transformation_dict[key](self[i, label_index])
-                except TypeError, e:
+                except TypeError as e:
                     raise Exception("Transformation provided for label %s is not a callable." % key)
         return DataFrame(transformed_self, self.frontier_labels)
