@@ -94,15 +94,15 @@ class TestFrame(unittest.TestCase):
                 data[i, j] = (i+1)*(j+1)
 
         transform_map = {
-            0: lambda(x): x**2, # Releasing owls
-            1: lambda(x): x-1, # Clipping wings
-            2: lambda(x): x+10,# Reading books
-            3: lambda(x): x/2, # Manicuring
-            4: lambda(x): x-2, # More manicuring
-            5: lambda(x): x+1, # Awarding degrees
-            6: lambda(x): math.exp(x), # Catch some dinner
+            0: lambda x: x**2, # Releasing owls
+            1: lambda x: x-1, # Clipping wings
+            2: lambda x: x+10,# Reading books
+            3: lambda x: x/2, # Manicuring
+            4: lambda x: x-2, # More manicuring
+            5: lambda x: x+1, # Awarding degrees
+            6: lambda x: math.exp(x), # Catch some dinner
           # 7                            No flying today.
-            8: lambda(x): math.sqrt(x) # Doing something with splines
+            8: lambda x: math.sqrt(x) # Doing something with splines
         }
         test_transformations = {}
         for label_index in transform_map:
