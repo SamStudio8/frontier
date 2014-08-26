@@ -76,8 +76,28 @@ class DataFrame(np.ndarray):
 
         return self[:, index_list]
 
-    def multiply_by_label(self, multiplier, label):
-        if label in self.frontier_label_index:
-            self[:,self.frontier_label_index[label]] *= multiplier
-        else:
-            raise Exception("Unknown label %s" % label)
+    # NOTE In a desire to avoid the perceived evils of `eval` I've chosen to just
+    #      trust users to provide their own `lambda` functions to transform
+    #      particular variables. In future we could use `pyparsing` to read in
+    #      mathematical expressions in string form.
+    def transform(self, transformation_dict):
+        transformed_self = self.copy()
+        for key in transformation_dict:
+            if key not in self.frontier_label_index:
+                raise Exception("Unknown label %s" % key)
+            try:
+                # NOTE Could use self here at the cost of reversibility
+                #      self[:,self.frontier_label_index[key]] = transformation_dict[key](self[:,self.frontier_label_index[key]])
+                transformed_self[:,self.frontier_label_index[key]] = transformation_dict[key](self[:,self.frontier_label_index[key]])
+
+            except TypeError, e:
+                # Try to apply the transformation to each applicable element
+                # to support use of `math` module functions which require
+                # scalars or length-1 arrays rather than lists.
+                try:
+                    label_index = self.frontier_label_index[key]
+                    for i in range(0, np.shape(self)[0]):
+                        transformed_self[i, label_index] = transformation_dict[key](self[i, label_index])
+                except TypeError, e:
+                    raise Exception("Transformation provided for label %s is not a callable." % key)
+        return DataFrame(transformed_self, self.frontier_labels)
