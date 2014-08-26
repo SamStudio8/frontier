@@ -10,6 +10,11 @@ History
     * :func:`frontier.frame.DataFrame.transform` takes a dictionary mapping
       labels to a lambda function that will be applied to the corresponding
       column of values in the DataFrame.
+    * :func:`frontier.frame.DataFrame.transform` allows specification of keyword
+      argument `add_unknown=True` which will append a zero filled column to the
+      right of the frame. Transformations will then be allowed to continue as if
+      the new column had always existed and can be populated using data from other
+      columns using the transformation syntax.
     * :func:`frontier.frame.DataFrame.add_observation` stacks a new observation
       array to the DataFrame.
 * `_test_variance` function of the `Statplexer` will now test the range of variance
