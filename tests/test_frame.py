@@ -119,7 +119,15 @@ class TestFrame(unittest.TestCase):
                         # Check nothing was transformed
                         self.assertEquals(frame[i, j], transformed_frame[i, j])
 
+    def test_bad_transform(self):
+        # Initialise data frame with trivial data
+        data = np.zeros([ARBITRARY_ROWS, len(TEST_PARAMETERS)])
+        frame = DataFrame(data, TEST_PARAMETERS)
+        for i in range(0, ARBITRARY_ROWS):
+            for j in range(0, len(TEST_PARAMETERS)):
+                data[i, j] = (i+1)*(j+1)
 
+        self.assertRaises(Exception, frame.transform, { TEST_PARAMETERS[0]: "hoot" })
 
 if __name__ == '__main__':
     unittest.main()

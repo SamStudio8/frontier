@@ -7,6 +7,11 @@ History
 * Introduced :class:`frontier.frame.DataFrame` which extends numpy's `ndarray`,
   that will now be returned from :class:`frontier.frontier.Statplexer`'s API
   functions that return read in data.
+    * :func:`frontier.frame.DataFrame.transform` takes a dictionary mapping
+      labels to a lambda function that will be applied to the corresponding
+      column of values in the DataFrame.
+    * :func:`frontier.frame.DataFrame.add_observation` stacks a new observation
+      array to the DataFrame.
 * `_test_variance` function of the `Statplexer` will now test the range of variance
   magnitudes across each parameter of read in data, issuing a warning and producing
   a table if a magnitude difference greater than ±1 is discovered.
