@@ -94,15 +94,15 @@ class TestFrame(unittest.TestCase):
                 data[i, j] = (i+1)*(j+1)
 
         transform_map = {
-            0: lambda x: x**2, # Releasing owls
-            1: lambda x: x-1, # Clipping wings
-            2: lambda x: x+10,# Reading books
-            3: lambda x: x/2, # Manicuring
-            4: lambda x: x-2, # More manicuring
-            5: lambda x: x+1, # Awarding degrees
-            6: lambda x: math.exp(x), # Catch some dinner
+            0: lambda x, f, i: x**2, # Releasing owls
+            1: lambda x, f, i: x-1, # Clipping wings
+            2: lambda x, f, i: x+10,# Reading books
+            3: lambda x, f, i: x/2, # Manicuring
+            4: lambda x, f, i: x-2, # More manicuring
+            5: lambda x, f, i: x+1, # Awarding degrees
+            6: lambda x, f, i: math.exp(x), # Catch some dinner
           # 7                            No flying today.
-            8: lambda x: math.sqrt(x) # Doing something with splines
+            8: lambda x, f, i: math.sqrt(x) # Doing something with splines
         }
         test_transformations = {}
         for label_index in transform_map:
@@ -113,10 +113,10 @@ class TestFrame(unittest.TestCase):
             for i, row in enumerate(frame):
                 for j, col in enumerate(frame[i]):
                     if j in transform_map:
-                        self.assertEquals(transform_map[j](frame[i, j]),
+                        self.assertEquals(transform_map[j](frame[i, j], frame, j),
                                           transformed_frame[i, j])
                     else:
-                        # Check nothing was transformed
+                        # Check nothing was transformed if it shouldn't have been
                         self.assertEquals(frame[i, j], transformed_frame[i, j])
 
     def test_bad_transform(self):
@@ -128,6 +128,33 @@ class TestFrame(unittest.TestCase):
                 data[i, j] = (i+1)*(j+1)
 
         self.assertRaises(Exception, frame.transform, { TEST_PARAMETERS[0]: "hoot" })
+
+    def test_transform_with_other_labels(self):
+        # Initialise data frame with trivial data
+        data = np.zeros([ARBITRARY_ROWS, len(TEST_PARAMETERS)])
+        frame = DataFrame(data, TEST_PARAMETERS)
+        for i in range(0, ARBITRARY_ROWS):
+            for j in range(0, len(TEST_PARAMETERS)):
+                data[i, j] = (i+1)*(j+1)
+
+        transform_map = {
+            0: lambda x, f, i: x + f.get("owl-ratio", i), # Increase owl capacity
+            8: lambda x, f, i: np.mean(f.get("owl-ratio", None)) - x  # Normalise the splines
+        }
+        test_transformations = {}
+        for label_index in transform_map:
+            test_transformations[TEST_PARAMETERS[label_index]] = transform_map[label_index]
+
+        transformed_frame = frame.transform(test_transformations)
+        for transform in test_transformations:
+            for i, row in enumerate(frame):
+                for j, col in enumerate(frame[i]):
+                    if j in transform_map:
+                        self.assertEquals(transform_map[j](frame[i, j], frame, i),
+                                          transformed_frame[i, j])
+                    else:
+                        # Check nothing was transformed if it shouldn't have been
+                        self.assertEquals(frame[i, j], transformed_frame[i, j])
 
 if __name__ == '__main__':
     unittest.main()
