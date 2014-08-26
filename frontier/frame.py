@@ -48,12 +48,33 @@ class DataFrame(np.ndarray):
         #    type(obj) is DataFrame
         #
         # Note that it is here, rather than in the __new__ method,
-        # that we set the default value for 'info', because this
+        # that we set any default values, because this
         # method sees all creation of default objects - with the
         # DataFrame.__new__ constructor, but also with
         # arr.view(DataFrame).
-        self.info = getattr(obj, 'info', None)
+        self.frontier_labels = getattr(obj, 'frontier_labels', [])
+        self.frontier_label_index = getattr(obj, 'frontier_labels', {})
         # We do not need to return anything
+
+    def add_observation(self, observation_list):
+        if len(observation_list) == len(self.frontier_label_index):
+            # NOTE FUTURE(samstudio8)
+            #      Somewhat inefficient to return a new DataFrame, perhaps create
+            #      a wrapper around the DataFrame which can overwrite the frame
+            #      without removing additional attributes like labels
+            return DataFrame(np.vstack( (self, observation_list) ), self.frontier_labels)
+        else:
+            raise Exception("Number of parameters in frame does not match number of parameters given.")
+
+    def exclude(self, labels):
+        index_list = []
+        for label in labels:
+            if label in obj.frontier_label_index:
+                index_list.append(obj.frontier_label_index[label])
+            else:
+                print("[WARN] Label %s not in DataFrame" % label)
+
+        return self[:, index_list]
 
     def multiply_by_label(self, multiplier, label):
         if label in self.frontier_label_index:
