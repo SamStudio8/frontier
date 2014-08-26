@@ -17,6 +17,7 @@ TEST_PARAMETERS = [
 ]
 ARBITRARY_ROWS = 10
 
+# TODO Test DataFrame.get
 class TestFrame(unittest.TestCase):
 
     # Ensure labels were added to columns in the order provided and
@@ -108,16 +109,19 @@ class TestFrame(unittest.TestCase):
         for label_index in transform_map:
             test_transformations[TEST_PARAMETERS[label_index]] = transform_map[label_index]
 
+        num_tests = 0
         transformed_frame = frame.transform(test_transformations)
-        for transform in test_transformations:
-            for i, row in enumerate(frame):
-                for j, col in enumerate(frame[i]):
-                    if j in transform_map:
-                        self.assertEquals(transform_map[j](frame[i, j], frame, j),
-                                          transformed_frame[i, j])
-                    else:
-                        # Check nothing was transformed if it shouldn't have been
-                        self.assertEquals(frame[i, j], transformed_frame[i, j])
+        for i, row in enumerate(transformed_frame):
+            for j, col in enumerate(transformed_frame[i]):
+                if j in transform_map:
+                    num_tests += 1
+                    self.assertEquals(transform_map[j](frame[i, j], frame, j),
+                                        transformed_frame[i, j])
+                else:
+                    # Check nothing was transformed if it shouldn't have been
+                    num_tests += 1
+                    self.assertEquals(frame[i, j], transformed_frame[i, j])
+        self.assertEquals(np.shape(transformed_frame)[0] * np.shape(transformed_frame)[1], num_tests)
 
     def test_bad_transform(self):
         # Initialise data frame with trivial data
@@ -145,16 +149,19 @@ class TestFrame(unittest.TestCase):
         for label_index in transform_map:
             test_transformations[TEST_PARAMETERS[label_index]] = transform_map[label_index]
 
+        num_tests = 0
         transformed_frame = frame.transform(test_transformations)
-        for transform in test_transformations:
-            for i, row in enumerate(frame):
-                for j, col in enumerate(frame[i]):
-                    if j in transform_map:
-                        self.assertEquals(transform_map[j](frame[i, j], frame, i),
-                                          transformed_frame[i, j])
-                    else:
-                        # Check nothing was transformed if it shouldn't have been
-                        self.assertEquals(frame[i, j], transformed_frame[i, j])
+        for i, row in enumerate(transformed_frame):
+            for j, col in enumerate(transformed_frame[i]):
+                if j in transform_map:
+                    num_tests += 1
+                    self.assertEquals(transform_map[j](frame[i, j], frame, i),
+                                        transformed_frame[i, j])
+                else:
+                    # Check nothing was transformed if it shouldn't have been
+                    num_tests += 1
+                    self.assertEquals(frame[i, j], transformed_frame[i, j])
+        self.assertEquals(np.shape(transformed_frame)[0] * np.shape(transformed_frame)[1], num_tests)
 
     def test_transform_mix_array_and_scalar_functionality(self):
         # Initialise data frame with trivial data
@@ -171,16 +178,56 @@ class TestFrame(unittest.TestCase):
         for label_index in transform_map:
             test_transformations[TEST_PARAMETERS[label_index]] = transform_map[label_index]
 
+        num_tests = 0
         transformed_frame = frame.transform(test_transformations)
-        for transform in test_transformations:
-            for i, row in enumerate(frame):
-                for j, col in enumerate(frame[i]):
-                    if j in transform_map:
-                        self.assertEquals(transform_map[j](frame[i, j], frame, i),
-                                          transformed_frame[i, j])
-                    else:
-                        # Check nothing was transformed if it shouldn't have been
-                        self.assertEquals(frame[i, j], transformed_frame[i, j])
+        for i, row in enumerate(transformed_frame):
+            for j, col in enumerate(transformed_frame[i]):
+                if j in transform_map:
+                    num_tests += 1
+                    self.assertEquals(transform_map[j](frame[i, j], frame, i),
+                                        transformed_frame[i, j])
+                else:
+                    # Check nothing was transformed if it shouldn't have been
+                    num_tests += 1
+                    self.assertEquals(frame[i, j], transformed_frame[i, j])
+        self.assertEquals(np.shape(transformed_frame)[0] * np.shape(transformed_frame)[1], num_tests)
+
+    def test_transform_new_label(self):
+        # Initialise data frame with trivial data
+        data = np.zeros([ARBITRARY_ROWS, len(TEST_PARAMETERS)])
+        frame = DataFrame(data, TEST_PARAMETERS)
+        for i in range(0, ARBITRARY_ROWS):
+            for j in range(0, len(TEST_PARAMETERS)):
+                data[i, j] = (i+1)*(j+1)
+
+        # NOTE We are not restricted to using an integer to label the new variable,
+        #      it just plays nicely with the assertion step later on...
+        ARBITRARY_NAME = len(TEST_PARAMETERS) # New index
+        transform_map = {
+            ARBITRARY_NAME: lambda x, f, i: f.get(TEST_PARAMETERS[1], i) * f.get(TEST_PARAMETERS[2], i)
+        }
+        test_transformations = {}
+        for label in transform_map:
+            test_transformations[label] = transform_map[label]
+
+        num_tests = 0
+        transformed_frame = frame.transform(test_transformations, add_unknown=True)
+        for i, row in enumerate(transformed_frame):
+            for j, col in enumerate(transformed_frame[i]):
+                if j in transform_map:
+                    num_tests += 1
+                    self.assertEquals(transform_map[j](None, frame, i),
+                                        transformed_frame[i, j])
+                else:
+                    # Check nothing was transformed if it shouldn't have been
+                    num_tests += 1
+                    self.assertEquals(frame[i, j], transformed_frame[i, j])
+        self.assertEquals(np.shape(transformed_frame)[0] * np.shape(transformed_frame)[1], num_tests)
+
+        # Check label was appended successfully
+        self.assertEquals(ARBITRARY_NAME, transformed_frame.frontier_labels[-1])
+        self.assertEquals(ARBITRARY_NAME, transformed_frame.frontier_label_index[ARBITRARY_NAME])
+
 
 if __name__ == '__main__':
     unittest.main()

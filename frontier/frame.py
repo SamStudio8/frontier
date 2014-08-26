@@ -81,25 +81,39 @@ class DataFrame(np.ndarray):
     #      particular variables. In future we could use `pyparsing` to read in
     #      mathematical expressions in string form.
     # TODO Order could become an issue
-    def transform(self, transformation_dict):
+    def transform(self, transformation_dict, add_unknown=False):
         transformed_self = self.copy()
         for key in transformation_dict:
+            new_label = False
             if key not in self.frontier_label_index:
-                raise Exception("Unknown label %s" % key)
+                if add_unknown:
+                    self.frontier_labels.append(key)
+                    self.frontier_label_index[key] = len(self.frontier_labels)-1
+                    transformed_self = np.c_[transformed_self, np.zeros(np.shape(self)[0])]
+                    new_label = True
+                else:
+                    raise Exception("Unknown label %s" % key)
 
+            label_index = self.frontier_label_index[key]
+
+            value = None
+            if not new_label:
+                value = self[:, label_index]
             try:
                 # NOTE Could use self here at the cost of reversibility
                 #      self[:,self.frontier_label_index[key]] = transformation_dict[key](self[:,self.frontier_label_index[key]])
-                transformed_self[:,self.frontier_label_index[key]] = transformation_dict[key](self[:,self.frontier_label_index[key]], self, None)
+                transformed_self[:, label_index] = transformation_dict[key](value, self, None)
 
             except TypeError as e:
                 # Try to apply the transformation to each applicable element
                 # to support use of `math` module functions which require
                 # scalars or length-1 arrays rather than lists.
                 try:
-                    label_index = self.frontier_label_index[key]
                     for i in range(0, np.shape(self)[0]):
-                        transformed_self[i, label_index] = transformation_dict[key](self[i, label_index], self, i)
+                        value = None
+                        if not new_label:
+                            value = self[i, label_index]
+                        transformed_self[i, label_index] = transformation_dict[key](value, self, i)
                 except TypeError as e:
                     raise Exception("TypeError '%s' encountered on key '%s'." % (e, key))
         return DataFrame(transformed_self, self.frontier_labels)
