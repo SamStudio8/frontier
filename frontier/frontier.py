@@ -10,6 +10,8 @@ import sys
 
 import numpy as np
 
+from frame import DataFrame
+
 def classify_label(classes, label):
     """
     Attempt to classify a label by comparing a given string to each set of
@@ -264,7 +266,7 @@ class Statplexer(object):
                 levels.append(self._targets[_id])
             counter += 1
 
-        return data_np_array, targ_np_array, sorted(levels)
+        return DataFrame(data_np_array, names), targ_np_array, sorted(levels)
 
     def get_targets(self):
         """
