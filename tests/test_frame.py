@@ -216,7 +216,7 @@ class TestFrame(unittest.TestCase):
             for j, col in enumerate(transformed_frame[i]):
                 if j in transform_map:
                     num_tests += 1
-                    self.assertEquals(transform_map[j](None, frame, i),
+                    self.assertEquals(transform_map[j](0.0, frame, i),
                                         transformed_frame[i, j])
                 else:
                     # Check nothing was transformed if it shouldn't have been

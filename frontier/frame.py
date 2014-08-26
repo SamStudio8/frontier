@@ -96,7 +96,7 @@ class DataFrame(np.ndarray):
 
             label_index = self.frontier_label_index[key]
 
-            value = None
+            value = 0.0
             if not new_label:
                 value = self[:, label_index]
             try:
@@ -110,7 +110,7 @@ class DataFrame(np.ndarray):
                 # scalars or length-1 arrays rather than lists.
                 try:
                     for i in range(0, np.shape(self)[0]):
-                        value = None
+                        value = 0.0
                         if not new_label:
                             value = self[i, label_index]
                         transformed_self[i, label_index] = transformation_dict[key](value, self, i)
