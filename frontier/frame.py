@@ -52,8 +52,8 @@ class DataFrame(np.ndarray):
         # method sees all creation of default objects - with the
         # DataFrame.__new__ constructor, but also with
         # arr.view(DataFrame).
-        self.frontier_labels = getattr(obj, 'frontier_labels', [])
-        self.frontier_label_index = getattr(obj, 'frontier_labels', {})
+        self.frontier_labels = getattr(obj, 'frontier_labels', [])[:]
+        self.frontier_label_index = getattr(obj, 'frontier_label_index', {}).copy()
         # We do not need to return anything
 
     def add_observation(self, observation_list):
@@ -62,19 +62,12 @@ class DataFrame(np.ndarray):
             #      Somewhat inefficient to return a new DataFrame, perhaps create
             #      a wrapper around the DataFrame which can overwrite the frame
             #      without removing additional attributes like labels
+            # NOTE FUTURE(samstiudio8)
+            #      DataFrames that have undergone a transformation should provide
+            #      a method for which to automatically transform new observations
             return DataFrame(np.vstack( (self, observation_list) ), self.frontier_labels)
         else:
             raise Exception("Number of parameters in frame does not match number of parameters given.")
-
-    def exclude(self, labels):
-        index_list = []
-        for label in labels:
-            if label in self.frontier_label_index:
-                index_list.append(self.frontier_label_index[label])
-            else:
-                print("[WARN] Label %s not in DataFrame" % label)
-
-        return self[:, index_list]
 
     # NOTE In a desire to avoid the perceived evils of `eval` I've chosen to just
     #      trust users to provide their own `lambda` functions to transform
