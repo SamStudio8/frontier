@@ -15,6 +15,8 @@ History
       right of the frame. Transformations will then be allowed to continue as if
       the new column had always existed and can be populated using data from other
       columns using the transformation syntax.
+    * :func:`frontier.frame.DataFrame.exclude` allows exclusion of a list of labels,
+      returning a new frame with any applicable columns removed.
     * :func:`frontier.frame.DataFrame.add_observation` stacks a new observation
       array to the DataFrame.
 * `_test_variance` function of the `Statplexer` will now test the range of variance

@@ -29,6 +29,23 @@ class TestFrame(unittest.TestCase):
             for j in range(0, len(TEST_PARAMETERS)):
                 cls.data[i, j] = (i+1)*(j+1)
 
+    # TODO Test stub for copying DataFrame
+    def test_copy(self):
+        frame_copy = self.frame.copy()
+
+        # Ensure labels match original frame metadata
+        for label in self.frame.frontier_labels:
+            self.assertIn(label, frame_copy.frontier_labels)
+            self.assertIn(label, frame_copy.frontier_label_index)
+
+        # Ensure label index is correct
+        for label in self.frame.frontier_label_index:
+            self.assertEqual(label, frame_copy.frontier_labels[frame_copy.frontier_label_index[label]])
+
+        # Ensure metadata objects are different (and not pointers to the same structures)
+        self.assertNotEqual(id(frame_copy.frontier_labels), id(self.frame.frontier_labels))
+        self.assertNotEqual(id(frame_copy.frontier_label_index), id(self.frame.frontier_label_index))
+
     # Ensure labels were added to columns in the order provided and
     # are correctly indexed
     def test_frame_label(self):
@@ -96,7 +113,7 @@ class TestFrame(unittest.TestCase):
                     self.assertEquals(0, frame[i, j])
 
     def test_transform(self):
-        frame = self.frame.copy()
+        frame = self.frame
 
         transform_map = {
             0: lambda x, f, i: x**2, # Releasing owls
@@ -128,11 +145,11 @@ class TestFrame(unittest.TestCase):
         self.assertEquals(np.shape(transformed_frame)[0] * np.shape(transformed_frame)[1], num_tests)
 
     def test_bad_transform(self):
-        frame = self.frame.copy()
+        frame = self.frame
         self.assertRaises(Exception, frame.transform, { TEST_PARAMETERS[0]: "hoot" })
 
     def test_transform_with_other_labels(self):
-        frame = self.frame.copy()
+        frame = self.frame
 
         transform_map = {
             0: lambda x, f, i: x + f.get(TEST_PARAMETERS[0], i), # Increase owl capacity
@@ -157,7 +174,7 @@ class TestFrame(unittest.TestCase):
         self.assertEquals(np.shape(transformed_frame)[0] * np.shape(transformed_frame)[1], num_tests)
 
     def test_transform_mix_array_and_scalar_functionality(self):
-        frame = self.frame.copy()
+        frame = self.frame
 
         transform_map = {
             0: lambda x, f, i: f.get(TEST_PARAMETERS[0], i) + math.factorial(math.ceil(x/2)), # Factorialising owl capacity
@@ -181,7 +198,7 @@ class TestFrame(unittest.TestCase):
         self.assertEquals(np.shape(transformed_frame)[0] * np.shape(transformed_frame)[1], num_tests)
 
     def test_transform_new_label(self):
-        frame = self.frame.copy()
+        frame = self.frame
 
         # NOTE We are not restricted to using an integer to label the new variable,
         #      it just plays nicely with the assertion step later on...
@@ -210,6 +227,46 @@ class TestFrame(unittest.TestCase):
         # Check label was appended successfully
         self.assertEquals(ARBITRARY_NAME, transformed_frame.frontier_labels[-1])
         self.assertEquals(ARBITRARY_NAME, transformed_frame.frontier_label_index[ARBITRARY_NAME])
+
+    def test_exclude(self):
+        frame = self.frame
+        EXCLUDE_LABEL_INDEXES = [3, 8]
+        EXCLUDE_LABELS = []
+        for i in EXCLUDE_LABEL_INDEXES:
+            EXCLUDE_LABELS.append(TEST_PARAMETERS[i])
+        transformed_frame = frame.exclude(EXCLUDE_LABELS)
+
+        # Check frame shape
+        self.assertEquals(np.shape(frame)[0], np.shape(transformed_frame)[0])
+        self.assertEquals(np.shape(frame)[1]-len(EXCLUDE_LABELS), np.shape(transformed_frame)[1])
+
+        # Ensure data dropped is actually missing
+        num_tests = 0
+        for i, row in enumerate(frame):
+            offset = 0
+            for j, col in enumerate(frame[i]):
+                if j in EXCLUDE_LABEL_INDEXES:
+                    # Try to find the unique element of the original frame indexed
+                    # by the current i,j anywhere in the current transformed row
+                    self.assertNotIn(frame[i, j], transformed_frame[i])
+
+                    # Track the number of columns missing by this j
+                    offset += 1
+                    num_tests += 1
+                else:
+                    # Ensure undropped data is unchanged
+                    self.assertEqual(frame[i, j], transformed_frame[i, j - offset])
+                    num_tests += 1
+        self.assertEquals(np.shape(frame)[0] * np.shape(frame)[1], num_tests)
+
+        # Ensure label does not appear in frame metadata
+        for excluded_label in EXCLUDE_LABELS:
+            self.assertNotIn(excluded_label, transformed_frame.frontier_labels)
+            self.assertNotIn(excluded_label, transformed_frame.frontier_label_index)
+
+        # Ensure label index is correct
+        for label in transformed_frame.frontier_label_index:
+            self.assertEqual(label, transformed_frame.frontier_labels[transformed_frame.frontier_label_index[label]])
 
 
 if __name__ == '__main__':

@@ -69,6 +69,17 @@ class DataFrame(np.ndarray):
         else:
             raise Exception("Number of parameters in frame does not match number of parameters given.")
 
+    def exclude(self, exclude_labels):
+        new_label_list = []
+        index_list = []
+        for label in self.frontier_labels:
+            if label in exclude_labels:
+                print("[NOTE] Dropping label '%s' from frame" % label)
+            else:
+                new_label_list.append(label)
+                index_list.append(self.frontier_label_index[label])
+        return DataFrame(self[:, index_list], new_label_list)
+
     # NOTE In a desire to avoid the perceived evils of `eval` I've chosen to just
     #      trust users to provide their own `lambda` functions to transform
     #      particular variables. In future we could use `pyparsing` to read in
@@ -80,14 +91,16 @@ class DataFrame(np.ndarray):
             new_label = False
             if key not in self.frontier_label_index:
                 if add_unknown:
-                    self.frontier_labels.append(key)
-                    self.frontier_label_index[key] = len(self.frontier_labels)-1
-                    transformed_self = np.c_[transformed_self, np.zeros(np.shape(self)[0])]
+                    transformed_self.frontier_labels.append(key)
+                    transformed_self = DataFrame(
+                            np.c_[transformed_self, np.zeros(np.shape(self)[0])],
+                            transformed_self.frontier_labels)
                     new_label = True
+                    print("[NOTE] Adding label '%s' to frame" % key)
                 else:
                     raise Exception("Unknown label %s" % key)
 
-            label_index = self.frontier_label_index[key]
+            label_index = transformed_self.frontier_label_index[key]
 
             value = 0.0
             if not new_label:
@@ -109,7 +122,7 @@ class DataFrame(np.ndarray):
                         transformed_self[i, label_index] = transformation_dict[key](value, self, i)
                 except TypeError as e:
                     raise Exception("TypeError '%s' encountered on key '%s'." % (e, key))
-        return DataFrame(transformed_self, self.frontier_labels)
+        return DataFrame(transformed_self, transformed_self.frontier_labels)
 
     def get(self, label, i):
         if label in self.frontier_label_index:
