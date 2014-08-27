@@ -133,7 +133,13 @@ class DataFrame(np.ndarray):
                     raise Exception("TypeError '%s' encountered on key '%s'." % (e, key))
         return DataFrame(transformed_self, transformed_self.frontier_labels)
 
-    def get(self, label, i):
+    def get_single(self, label, i):
+        # Raise a ValueError to force a fallback to row-by-row transformations
+        if i is None:
+            raise ValueError()
+        return self.get(label, i)
+
+    def get(self, label, i=None):
         if label in self.frontier_label_index:
             index = self.frontier_label_index[label]
         else:

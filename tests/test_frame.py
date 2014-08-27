@@ -18,6 +18,7 @@ TEST_PARAMETERS = [
 ARBITRARY_ROWS = 10
 
 # TODO Test DataFrame.get
+# TODO Test differences between use of get("A") and get("A", i)
 class TestFrame(unittest.TestCase):
 
     @classmethod
@@ -153,7 +154,7 @@ class TestFrame(unittest.TestCase):
 
         transform_map = {
             0: lambda x, f, i: x + f.get(TEST_PARAMETERS[0], i), # Increase owl capacity
-            8: lambda x, f, i: np.mean(f.get(TEST_PARAMETERS[8], None)) - x  # Normalise the splines
+            8: lambda x, f, i: np.mean(f.get(TEST_PARAMETERS[8])) - x  # Normalise the splines
         }
         test_transformations = {}
         for label_index in transform_map:
@@ -200,26 +201,38 @@ class TestFrame(unittest.TestCase):
     def test_transform_ambiguous_function(self):
         frame = self.frame
 
+        # NOTE We are not restricted to using an integer to label the new variable,
+        #      it just plays nicely with the assertion step later on...
+        ARBITRARY_NAME = len(TEST_PARAMETERS) # New index
         transform_map = {
-            0: lambda x, f, i: max([f.get(TEST_PARAMETERS[0], i), f.get(TEST_PARAMETERS[6], i)]),
+            ARBITRARY_NAME: lambda x, f, i: max([f.get(TEST_PARAMETERS[0], i), f.get(TEST_PARAMETERS[6], i)]),
+            ARBITRARY_NAME+1: lambda x, f, i: np.max([f.get_single(TEST_PARAMETERS[0], i), f.get_single(TEST_PARAMETERS[6], i)]),
+            ARBITRARY_NAME+2: lambda x, f, i: np.max([f.get(TEST_PARAMETERS[0]), f.get(TEST_PARAMETERS[6])]),
         }
         test_transformations = {}
-        for label_index in transform_map:
-            test_transformations[TEST_PARAMETERS[label_index]] = transform_map[label_index]
+        for label in transform_map:
+            test_transformations[label] = transform_map[label]
 
         num_tests = 0
-        transformed_frame = frame.transform(test_transformations)
+        transformed_frame = frame.transform(test_transformations, add_unknown=True)
         for i, row in enumerate(transformed_frame):
             for j, col in enumerate(transformed_frame[i]):
                 if j in transform_map:
                     num_tests += 1
-                    self.assertEquals(transform_map[j](frame[i, j], frame, i),
+                    self.assertEquals(transform_map[j](0.0, frame, i),
                                         transformed_frame[i, j])
                 else:
                     # Check nothing was transformed if it shouldn't have been
                     num_tests += 1
                     self.assertEquals(frame[i, j], transformed_frame[i, j])
         self.assertEquals(np.shape(transformed_frame)[0] * np.shape(transformed_frame)[1], num_tests)
+
+        # Expect ARBITRARY_NAME+0 and ARBITRARY_NAME+1 to be equal
+        self.assertTrue(np.all(transformed_frame[:, ARBITRARY_NAME] ==
+                               transformed_frame[:, ARBITRARY_NAME+1]))
+
+        # Expect ARBITRARY_NAME+2 to all be same value
+        self.assertEquals(0, np.var(transformed_frame[:, ARBITRARY_NAME+2]))
 
     def test_transform_new_label(self):
         frame = self.frame
