@@ -207,10 +207,8 @@ class TestFrame(unittest.TestCase):
         for label_index in transform_map:
             test_transformations[TEST_PARAMETERS[label_index]] = transform_map[label_index]
 
-        print frame
         num_tests = 0
         transformed_frame = frame.transform(test_transformations)
-        print transformed_frame
         for i, row in enumerate(transformed_frame):
             for j, col in enumerate(transformed_frame[i]):
                 if j in transform_map:
