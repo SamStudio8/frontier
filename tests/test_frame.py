@@ -20,6 +20,15 @@ ARBITRARY_ROWS = 10
 # TODO Test DataFrame.get
 class TestFrame(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        # Initialise a data frame with trivial data
+        cls.data = np.zeros([ARBITRARY_ROWS, len(TEST_PARAMETERS)])
+        cls.frame = DataFrame(cls.data, TEST_PARAMETERS)
+        for i in range(0, ARBITRARY_ROWS):
+            for j in range(0, len(TEST_PARAMETERS)):
+                cls.data[i, j] = (i+1)*(j+1)
+
     # Ensure labels were added to columns in the order provided and
     # are correctly indexed
     def test_frame_label(self):
@@ -87,12 +96,7 @@ class TestFrame(unittest.TestCase):
                     self.assertEquals(0, frame[i, j])
 
     def test_transform(self):
-        # Initialise data frame with trivial data
-        data = np.zeros([ARBITRARY_ROWS, len(TEST_PARAMETERS)])
-        frame = DataFrame(data, TEST_PARAMETERS)
-        for i in range(0, ARBITRARY_ROWS):
-            for j in range(0, len(TEST_PARAMETERS)):
-                data[i, j] = (i+1)*(j+1)
+        frame = self.frame.copy()
 
         transform_map = {
             0: lambda x, f, i: x**2, # Releasing owls
@@ -124,22 +128,11 @@ class TestFrame(unittest.TestCase):
         self.assertEquals(np.shape(transformed_frame)[0] * np.shape(transformed_frame)[1], num_tests)
 
     def test_bad_transform(self):
-        # Initialise data frame with trivial data
-        data = np.zeros([ARBITRARY_ROWS, len(TEST_PARAMETERS)])
-        frame = DataFrame(data, TEST_PARAMETERS)
-        for i in range(0, ARBITRARY_ROWS):
-            for j in range(0, len(TEST_PARAMETERS)):
-                data[i, j] = (i+1)*(j+1)
-
+        frame = self.frame.copy()
         self.assertRaises(Exception, frame.transform, { TEST_PARAMETERS[0]: "hoot" })
 
     def test_transform_with_other_labels(self):
-        # Initialise data frame with trivial data
-        data = np.zeros([ARBITRARY_ROWS, len(TEST_PARAMETERS)])
-        frame = DataFrame(data, TEST_PARAMETERS)
-        for i in range(0, ARBITRARY_ROWS):
-            for j in range(0, len(TEST_PARAMETERS)):
-                data[i, j] = (i+1)*(j+1)
+        frame = self.frame.copy()
 
         transform_map = {
             0: lambda x, f, i: x + f.get(TEST_PARAMETERS[0], i), # Increase owl capacity
@@ -164,12 +157,7 @@ class TestFrame(unittest.TestCase):
         self.assertEquals(np.shape(transformed_frame)[0] * np.shape(transformed_frame)[1], num_tests)
 
     def test_transform_mix_array_and_scalar_functionality(self):
-        # Initialise data frame with trivial data
-        data = np.zeros([ARBITRARY_ROWS, len(TEST_PARAMETERS)])
-        frame = DataFrame(data, TEST_PARAMETERS)
-        for i in range(0, ARBITRARY_ROWS):
-            for j in range(0, len(TEST_PARAMETERS)):
-                data[i, j] = (i+1)*(j+1)
+        frame = self.frame.copy()
 
         transform_map = {
             0: lambda x, f, i: f.get(TEST_PARAMETERS[0], i) + math.factorial(math.ceil(x/2)), # Factorialising owl capacity
@@ -193,12 +181,7 @@ class TestFrame(unittest.TestCase):
         self.assertEquals(np.shape(transformed_frame)[0] * np.shape(transformed_frame)[1], num_tests)
 
     def test_transform_new_label(self):
-        # Initialise data frame with trivial data
-        data = np.zeros([ARBITRARY_ROWS, len(TEST_PARAMETERS)])
-        frame = DataFrame(data, TEST_PARAMETERS)
-        for i in range(0, ARBITRARY_ROWS):
-            for j in range(0, len(TEST_PARAMETERS)):
-                data[i, j] = (i+1)*(j+1)
+        frame = self.frame.copy()
 
         # NOTE We are not restricted to using an integer to label the new variable,
         #      it just plays nicely with the assertion step later on...
