@@ -110,10 +110,19 @@ class DataFrame(np.ndarray):
                 #      self[:,self.frontier_label_index[key]] = transformation_dict[key](self[:,self.frontier_label_index[key]])
                 transformed_self[:, label_index] = transformation_dict[key](value, self, None)
 
-            except TypeError as e:
+            except (TypeError, ValueError) as e:
+                # TypeError
                 # Try to apply the transformation to each applicable element
                 # to support use of `math` module functions which require
                 # scalars or length-1 arrays rather than lists.
+
+                # ValueError
+                # Try to apply the transformation to each applicable element
+                # where a function that accepts an array is ambiguous for example
+                #   max(f.get("A", i), f.get("B", i))
+                # Are we looking at the maximum element in the array or not?
+                # numpy will raise a ValueError which we can use to fall back
+                # to applying the transformation to each individual row.
                 try:
                     for i in range(0, np.shape(self)[0]):
                         value = 0.0

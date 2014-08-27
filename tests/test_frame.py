@@ -197,6 +197,32 @@ class TestFrame(unittest.TestCase):
                     self.assertEquals(frame[i, j], transformed_frame[i, j])
         self.assertEquals(np.shape(transformed_frame)[0] * np.shape(transformed_frame)[1], num_tests)
 
+    def test_transform_ambiguous_function(self):
+        frame = self.frame
+
+        transform_map = {
+            0: lambda x, f, i: max([f.get(TEST_PARAMETERS[0], i), f.get(TEST_PARAMETERS[6], i)]),
+        }
+        test_transformations = {}
+        for label_index in transform_map:
+            test_transformations[TEST_PARAMETERS[label_index]] = transform_map[label_index]
+
+        print frame
+        num_tests = 0
+        transformed_frame = frame.transform(test_transformations)
+        print transformed_frame
+        for i, row in enumerate(transformed_frame):
+            for j, col in enumerate(transformed_frame[i]):
+                if j in transform_map:
+                    num_tests += 1
+                    self.assertEquals(transform_map[j](frame[i, j], frame, i),
+                                        transformed_frame[i, j])
+                else:
+                    # Check nothing was transformed if it shouldn't have been
+                    num_tests += 1
+                    self.assertEquals(frame[i, j], transformed_frame[i, j])
+        self.assertEquals(np.shape(transformed_frame)[0] * np.shape(transformed_frame)[1], num_tests)
+
     def test_transform_new_label(self):
         frame = self.frame
 
