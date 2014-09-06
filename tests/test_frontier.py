@@ -265,13 +265,13 @@ class TestFrontier(unittest.TestCase):
         # Data was generated in __init __ as i*j for jth attribute of ith observation
         # Where j is the index of the parameter in the TEST_PARAMETER list
         # Ignore ith row if the corresponding target is not in search_targets
-        for i, param_set in enumerate(data):
+        for i in range(0, data.shape[0]):
             if TARGETS[i] not in search_targets:
                 continue
 
-            for k, value in enumerate(param_set):
+            for k, value in enumerate(data.iloc[i]):
                 j = TEST_PARAMETERS.index(search_terms[k])
-                self.assertEqual(i*j, data[i,k])
+                self.assertEqual(i*j, data.iat[i,k])
 
         # One data element must exist for each target
         self.assertEqual(len(data), len(target))
