@@ -20,6 +20,7 @@ Requirements
 To use;
 
 * numpy
+* pandas
 
 To test;
 

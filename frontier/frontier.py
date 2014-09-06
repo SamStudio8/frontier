@@ -9,6 +9,7 @@ import os
 import sys
 
 import numpy as np
+import pandas as pd
 
 from .frame import DataFrame
 
@@ -266,7 +267,8 @@ class Statplexer(object):
                 levels.append(self._targets[_id])
             counter += 1
 
-        return DataFrame(data_np_array, names), targ_np_array, sorted(levels)
+        #return DataFrame(data_np_array, names), targ_np_array, sorted(levels)
+        return pd.DataFrame(data_np_array, columns=names), targ_np_array, sorted(levels)
 
     def get_targets(self):
         """
