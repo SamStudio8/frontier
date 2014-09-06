@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 __author__ = "Sam Nicholls <sn8@sanger.ac.uk>"
 __copyright__ = "Copyright (c) Sam Nicholls"
-__version__ = "0.1.2"
 __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
 
 import math

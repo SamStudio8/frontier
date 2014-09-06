@@ -1,6 +1,11 @@
 History
 =======
 
+0.2.0-dev
+---------
+* Dropped support for :class:`frontier.frame.DataFrame`, electing to return a
+  `pandas` DataFrame instead.
+
 0.1.3-dev
 ---------
 
